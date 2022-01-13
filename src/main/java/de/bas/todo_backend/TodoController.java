@@ -6,15 +6,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/todos")
 public class TodoController {
 
     @GetMapping
-    public List<String> getTodos()
-    {
-        return Arrays.asList("xxx","yyy");
+    public List<TodoModel> getTodos() {
+        TodoModel temp = new TodoModel(UUID.randomUUID(), "Todo", "Todo erledigen", false);
+        TodoModel temp2 = new TodoModel(UUID.randomUUID(), "Todo2", "Todo2 erledigen", false);
+
+        return Arrays.asList(temp, temp2);
     }
 
 }
