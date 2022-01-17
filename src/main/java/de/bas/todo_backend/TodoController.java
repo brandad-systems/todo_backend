@@ -17,7 +17,7 @@ public class TodoController {
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TodoModel>> getTodos() {
-        return new ResponseEntity<>(todoService.getTodos(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(todoService.getTodos(), HttpStatus.OK);
     }
 
     @PostMapping("")
