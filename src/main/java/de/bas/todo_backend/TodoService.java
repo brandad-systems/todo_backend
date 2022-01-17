@@ -11,13 +11,15 @@ import java.util.UUID;
 public class TodoService {
 
     private final TodoRepository repo;
+    private final TodoService2 todoService2;
 
     public List<TodoModel> getTodos(){
         return repo.getTodos();
     }
 
     public String createTodo(TodoCreateModel createTodo){
-        return repo.createTodo(createTodo);
+        return todoService2.createTodo(createTodo);
+        //return repo.createTodo(createTodo);
     }
 
     public TodoModel updateTodo(UUID id, TodoModel updateTodo){
