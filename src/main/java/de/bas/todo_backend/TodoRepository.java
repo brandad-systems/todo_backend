@@ -64,6 +64,6 @@ public class TodoRepository {
             logger.error(e.getMessage());
         }
         logger.info(todo.toString());
-        return null;
+        return todo;
     }
 }
