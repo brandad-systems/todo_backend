@@ -1,6 +1,5 @@
 package de.bas.todo_backend;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +27,7 @@ public class TodoService2Test {
 
 
     @Autowired
-    private TodoJPARepository todoRepo;
+    private TodoRepository2 todoRepo;
 
     @Autowired
     private TodoService2 todoService2 ;

@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 public class TodoService2 {
 
-    private final TodoJPARepository todoRepo;
+    private final TodoRepository2 todoRepo;
     private final ObjectMapper objectMapper;
 
     public String createTodo(TodoCreateModel createTodo) {
