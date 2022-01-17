@@ -52,7 +52,10 @@ public class TodoRepository {
     public TodoModel patch(UUID id, String patchTodo) {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        TodoModel todo = todos.stream().filter(todoObj -> todoObj.getId().equals(id)).findFirst().get();
+        TodoModel todo = todos.stream()
+                .filter(todoObj -> todoObj.getId().equals(id))
+                .peek(v -> logger.info("peek:",v))
+                .findFirst().get();
 
         try {
             ObjectReader todoReader = objectMapper.readerForUpdating(todo);
