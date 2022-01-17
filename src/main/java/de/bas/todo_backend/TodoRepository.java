@@ -28,7 +28,10 @@ public class TodoRepository {
     public String createTodo(TodoCreateModel createTodo) {
         TodoModel todo = new TodoModel(UUID.randomUUID(), createTodo.getTitle(), createTodo.getContent(), createTodo.getDone());
         todos.add(todo);
-        return todo.getId().toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String todoId = "{ \"id\" : \""+todo.getId()+"\"}";
+        logger.info("todoid :", todoId);
+        return todoId;
     }
 
     public TodoModel updateTodo(UUID id, TodoModel updateTodo) {
@@ -45,7 +48,7 @@ public class TodoRepository {
 
     public void deleteTodo(UUID id) {
 
-            todos.removeIf( todo -> todo.getId().equals(id));
+        todos.removeIf(todo -> todo.getId().equals(id));
     }
 
 
@@ -54,7 +57,7 @@ public class TodoRepository {
 
         TodoModel todo = todos.stream()
                 .filter(todoObj -> todoObj.getId().equals(id))
-                .peek(v -> logger.info("peek:",v))
+                .peek(v -> logger.info("peek:", v))
                 .findFirst().get();
 
         try {
