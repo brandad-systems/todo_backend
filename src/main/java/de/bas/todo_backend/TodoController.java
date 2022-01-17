@@ -1,6 +1,5 @@
 package de.bas.todo_backend;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,7 @@ public class TodoController {
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TodoModel>> getTodos() {
-        return new ResponseEntity(todoService.getTodos(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(todoService.getTodos(), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("")

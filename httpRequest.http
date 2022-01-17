@@ -1,4 +1,18 @@
-DELETE http://localhost:8080/api/v1/todos/c0b18a3a-c923-4ea0-9782-87e6062ad4c8
+POST http://localhost:8080/api/v1/todos/
+Content-Type: application/json
+
+{
+  "title": "Posting todo",
+  "content": "todo content",
+  "done": "false"
+}
+###
+
+
+###
+GET http://localhost:8080/api/v1/todos/
+
+
 ###
 PUT http://localhost:8080/api/v1/todos/c0b18a3a-c923-4ea0-9782-87e6062ad4c8
 Content-Type: application/json
@@ -10,25 +24,16 @@ Content-Type: application/json
   "done": true
 }
 ###
-POST http://localhost:8080/api/v1/todos/
-Content-Type: application/json
 
-{
-  "title": "Posting todo",
-  "content": "todo content",
-  "done": "false"
-}
-
-
-###
-GET http://localhost:8080/api/v1/todos/
+DELETE http://localhost:8080/api/v1/todos/c0b18a3a-c923-4ea0-9782-87e6062ad4c8
 
 ###
 PATCH http://localhost:8080/api/v1/todos/c0b18a3a-c923-4ea0-9782-87e6062ad4c8
 Content-Type: text/plain
 
 {
-  "title": "title",
-  "content": "content",
   "done": true
 }
+
+###
+GET http://localhost:8080/api/v1/todos/
