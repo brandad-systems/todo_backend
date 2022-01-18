@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class TodoService2 {
         return "{ \"id\" : \"" + saved.getId() + "\"}";
     }
 
-    public TodoModel updateTodo(UUID id, TodoModel updateTodo) {
+    public TodoModel updateTodo(UUID id, TodoModel updateTodo) throws Exception {
         Optional<TodoModel> todo = todoRepo.findById(id);
         if (todo.isPresent()) {
             todo.get().setTitle(updateTodo.getTitle());
@@ -36,7 +37,7 @@ public class TodoService2 {
             todo.get().setDone(updateTodo.getDone());
             return todoRepo.save(todo.get());
         } else
-            return null;
+            throw new Exception("No class de.bas.todo_backend.TodoModel entity with id");
     }
 
     public void deleteTodo(UUID id) {
@@ -44,10 +45,14 @@ public class TodoService2 {
     }
 
 
-    public TodoModel patch(UUID id, String patchTodo) throws JsonProcessingException {
+    public TodoModel patch(UUID id, String patchTodo) throws Exception {
         Optional<TodoModel> todoOpt = todoRepo.findById(id);
         ObjectReader todoReader = objectMapper.readerForUpdating(todoOpt.orElse(null));
         TodoModel todo = todoReader.readValue(patchTodo);
         return updateTodo( id, todo );
+    }
+
+    public List<TodoModel> getTodos() {
+        return  todoRepo.findAll();
     }
 }

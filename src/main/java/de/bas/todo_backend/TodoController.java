@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import java.util.UUID;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -36,7 +37,7 @@ public class TodoController {
         todoService.deleteTodo(id);
     }
 
-    @PatchMapping(path = "/{id}", consumes = "text/plain")
+    @PatchMapping(path = "/{id}")
     public TodoModel updateTodoPartially(@PathVariable("id") UUID id, @RequestBody String patchTodo) {
         return todoService.patch(id, patchTodo);
     }

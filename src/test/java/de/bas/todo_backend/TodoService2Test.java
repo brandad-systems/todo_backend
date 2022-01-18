@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.assertj.core.api.Assertions.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DataJpaTest
@@ -30,14 +33,13 @@ public class TodoService2Test {
     private TodoRepository2 todoRepo;
 
     @Autowired
-    private TodoService2 todoService2 ;
+    private TodoService2 todoService2;
     TodoModel todo;
     TodoModel todo2;
     private TodoModel savedTodo2;
     private TodoModel savedTodo;
     private String mycontent3;
     private String myTitle3;
-
 
 
     @BeforeEach
@@ -51,8 +53,8 @@ public class TodoService2Test {
         todo2.setTitle("test2");
         todo2.setContent("mycontent");
         savedTodo2 = todoRepo.save(todo2);
-         mycontent3 = "mycontent3";
-         myTitle3= "title3";
+        mycontent3 = "mycontent3";
+        myTitle3 = "title3";
     }
 
     @Test
@@ -61,61 +63,121 @@ public class TodoService2Test {
         assertThat(count).isEqualTo(2L);
 
         List<TodoModel> findByLastName = todoRepo.findByTitle(todo.getTitle());
-        log.info("element title: "+findByLastName.get(0).getTitle());
-        findByLastName.forEach(e -> log.info("element title: "+e.getTitle()));
+        log.info("element title: " + findByLastName.get(0).getTitle());
+        findByLastName.forEach(e -> log.info("element title: " + e.getTitle()));
         assertThat(findByLastName).extracting(TodoModel::getTitle).containsOnly(todo.getTitle());
     }
 
     @Test
-    public void createTodo(){
+    public void getTodos() {
+        log.info("begin count=" + todoRepo.count());
+
+
+        List<TodoModel> todos = todoRepo.findAll();
+        todos.forEach(savedTodo -> log.info("savedTodo:" + savedTodo.toString()));
+
+        List<TodoModel> allTodos = todoService2.getTodos();
+        assertThat(todos.size()).isEqualTo(allTodos.size());
+    }
+
+    @Test
+    public void createTodo() {
+        log.info("begin count=" + todoRepo.count());
         assertThat(todoService2).isNotNull();
         assertThat(todoService2.getTodoRepo()).isNotNull();
-       
-        TodoCreateModel createModel = new TodoCreateModel(myTitle3,mycontent3,false);
+
+        TodoCreateModel createModel = new TodoCreateModel(myTitle3, mycontent3, false);
         String resultUUID = todoService2.createTodo(createModel);
 
-        Iterable<TodoModel> todos = todoRepo.findByTitle("test3");
-        todos.forEach(savedTodo -> log.info("savedTodo:"+savedTodo.toString()));
+        List<TodoModel> todos = todoRepo.findByTitle("test3");
+        todos.forEach(savedTodo -> log.info("savedTodo:" + savedTodo.toString()));
         todos.forEach(savedTodo -> assertThat(savedTodo.getContent()).isEqualTo((mycontent3)));
     }
+
     @Test
-    public void update(){
+    public void update() throws Exception {
+        log.info("begin count=" + todoRepo.count());
         //arrange
-        Iterable<TodoModel> todos = todoRepo.findByTitle(todo.getTitle());
-        TodoModel mytodo = todos.iterator().next();
+        List<TodoModel> todos = todoRepo.findByTitle(todo.getTitle());
+        TodoModel mytodo = todos.get(0);
         mytodo.setTitle(myTitle3);
         mytodo.setContent(mycontent3);
         //act
-        todoService2.updateTodo(mytodo.getId(),mytodo);
+        todoService2.updateTodo(mytodo.getId(), mytodo);
         //assert
         TodoModel checkTodo = todoRepo.findByTitle(todo.getTitle()).iterator().next();
-        assertThat( checkTodo.getTitle()).isEqualTo(myTitle3);
-        assertThat( checkTodo.getContent()).isEqualTo(mycontent3);
+        assertThat(checkTodo.getTitle()).isEqualTo(myTitle3);
+        assertThat(checkTodo.getContent()).isEqualTo(mycontent3);
 
     }
+
     @Test
-    public void delete(){
+    public void updateButNotExisting() {
+
+        final UUID finNotexisting =  getNotExisting();
+        TodoModel todo4Update = new TodoModel(finNotexisting,"myTitle3", "mycontent3", false);
+        Exception exception = assertThrows(Exception.class, () -> {
+            //when
+            //Code under test
+            todoService2.updateTodo(finNotexisting,todo4Update);
+        });
+        //then
+        assertThat( exception.getMessage()).startsWith("No class de.bas.todo_backend.TodoModel entity with id");
+    }
+
+    @Test
+    public void delete() {
         Iterable<TodoModel> todos = todoRepo.findByTitle(todo.getTitle());
         TodoModel mytodo = todos.iterator().next();
         //act
         todoService2.deleteTodo(mytodo.getId());
         //assert
-        assertThat( todoRepo.findByTitle(todo.getTitle()).iterator().hasNext()).isFalse();
-
+        assertThat(todoRepo.findByTitle(todo.getTitle()).iterator().hasNext()).isFalse();
     }
+
     @Test
-    public void patch() throws JsonProcessingException {
+    public void deleteButNotExisting() {
+
+        final UUID finNotexisting =  getNotExisting();
+        Exception exception = assertThrows(Exception.class, () -> {
+            //when
+            //Code under test
+            todoService2.deleteTodo(finNotexisting);
+        });
+        //then
+        assertThat( exception.getMessage()).startsWith("No class de.bas.todo_backend.TodoModel entity with id");
+    }
+
+    private UUID getNotExisting() {
+        Iterable<TodoModel> todos = todoRepo.findAll();
+        UUID notexisting;
+        boolean repeat = false;
+        do {
+            notexisting = UUID.randomUUID();
+            for (TodoModel todo : todos) {
+                if (todo.getId() == notexisting) {
+                    repeat = true;
+                    break;
+                }
+
+            }
+        } while (repeat);
+        return notexisting;
+    }
+
+    @Test
+    public void patch() throws Exception {
 
         //arrange
         Iterable<TodoModel> todos = todoRepo.findByTitle(todo.getTitle());
         TodoModel mytodo = todos.iterator().next();
-        String patch ="{ \"title\":\"othertitle\"}";
+        String patch = "{ \"title\":\"othertitle\"}";
         //act
-        todoService2.patch(mytodo.getId(),patch);
+        todoService2.patch(mytodo.getId(), patch);
         //assert
         TodoModel checkTodo = todoRepo.findByTitle(todo.getTitle()).iterator().next();
-        assertThat( checkTodo.getTitle()).isEqualTo("othertitle");
-        assertThat( checkTodo.getContent()).isEqualTo(todo.getContent());
+        assertThat(checkTodo.getTitle()).isEqualTo("othertitle");
+        assertThat(checkTodo.getContent()).isEqualTo(todo.getContent());
 
     }
 
