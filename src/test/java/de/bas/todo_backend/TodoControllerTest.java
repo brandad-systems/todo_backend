@@ -1,7 +1,6 @@
 package de.bas.todo_backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -51,13 +50,11 @@ public class TodoControllerTest {
         //given
         TodoCreateModel todo1 = new TodoCreateModel("todo1", "test", false);
         UUID id = UUID.randomUUID();
-        when(todoService.createTodo(todo1)).thenReturn(id.toString());
         // when
         mockMvc.perform(post("/api/v1/todos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(todo1)))
-                        .andExpect(status().isOk())
-                        .andExpect(content().string(id.toString()));
+                        .andExpect(status().isOk());
 
         verify(todoService, times(1)).createTodo(todo1);
     }

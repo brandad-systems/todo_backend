@@ -1,7 +1,6 @@
 package de.bas.todo_backend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +19,12 @@ public class TodoController {
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TodoModel>> getTodos() {
-        return new ResponseEntity(todoService.getTodos(), HttpStatus.OK);
+        return new ResponseEntity<>(todoService.getTodos(), HttpStatus.OK);
     }
 
     @PostMapping(produces = "application/json")
-    public ResponseEntity<TodoModel> createTodo(@RequestBody TodoCreateModel createTodo) throws JsonProcessingException {
-        TodoModel todoModel = new ObjectMapper().readValue("{\"id\":"+"\""+todoService.createTodo(createTodo)+"\"}",TodoModel.class);
-        return new ResponseEntity<>(todoModel, HttpStatus.OK);
+    public void createTodo(@RequestBody TodoCreateModel createTodo) throws JsonProcessingException {
+        todoService.createTodo(createTodo);
     }
 
     @PutMapping(path="/{id}", produces = "application/json")

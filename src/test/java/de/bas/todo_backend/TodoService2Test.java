@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.UUID;
 
@@ -48,10 +47,9 @@ class TodoService2Test {
         //given
         TodoCreateModel todoRequest= new TodoCreateModel("Test","Test Content",false);
         //when
-        String expected = todoService.createTodo(todoRequest);
+        todoService.createTodo(todoRequest);
         //then
-        assertTrue(expected!=null);
-        assertTrue(repository.findById(UUID.fromString(expected)).isPresent());
+        fail();
     }
 
     @Test

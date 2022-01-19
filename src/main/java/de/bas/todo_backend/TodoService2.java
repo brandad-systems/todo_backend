@@ -1,6 +1,5 @@
 package de.bas.todo_backend;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,9 @@ public class TodoService2 {
         return repo.findAll();
     }
 
-    public String createTodo(TodoCreateModel createTodo) {
+    public void createTodo(TodoCreateModel createTodo) {
         TodoModel todoModel = new TodoModel(createTodo.getTitle(), createTodo.getContent(), createTodo.getDone());
-       return repo.save(todoModel).getId().toString();
+       repo.save(todoModel);
     }
 
     public TodoModel updateTodo(UUID id, TodoModel updateTodo) {
