@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,22 +46,24 @@ class TodoService2Test {
     @Test
     void createTodo() {
         //given
-        TodoCreateModel todoRequest= new TodoCreateModel("Test","Test Content",false);
+        long numberOfTodos = repository.count();
+        TodoCreateModel todoRequest = new TodoCreateModel("Test", "Test Content", false);
         //when
-        todoService.createTodo(todoRequest);
+        TodoModel todo = todoService.createTodo(todoRequest);
         //then
-        fail();
+        assertEquals(repository.count(), numberOfTodos + 1);
+        assertTrue(repository.findById(todo.getId()).isPresent());
     }
 
     @Test
     void upDateTodo() {
         //given
-        TodoModel targetTodo= testTodo;
+        TodoModel targetTodo = testTodo;
         String test_to_do_not = "test to do not";
         targetTodo.setTitle(test_to_do_not);
 
         //when
-        TodoModel expected = todoService.updateTodo(targetTodo.getId(),targetTodo);
+        TodoModel expected = todoService.updateTodo(targetTodo.getId(), targetTodo);
 
         //then
         assertTrue(expected.getTitle().equals(test_to_do_not));
@@ -72,19 +75,19 @@ class TodoService2Test {
     void whenTodoNotFound_Throw_Exception_UpdateTodo() {
 
         //given
-        TodoModel targetTodo= testTodo;
+        TodoModel targetTodo = testTodo;
         String test_to_do_not = "test to do not";
         targetTodo.setTitle(test_to_do_not);
 
         //then
-        assertThrows(IllegalArgumentException.class,()->todoService.updateTodo(UUID.randomUUID(),targetTodo));
+        assertThrows(IllegalArgumentException.class, () -> todoService.updateTodo(UUID.randomUUID(), targetTodo));
     }
 
     @Test
     void patchTodo() throws Exception {
 
         //given
-        TodoModel targetTodo= testTodo;
+        TodoModel targetTodo = testTodo;
         String test_to_do_not = "test to do not";
         targetTodo.setTitle(test_to_do_not);
 
@@ -92,7 +95,7 @@ class TodoService2Test {
         TodoModel expected = todoService.patch(targetTodo.getId(), "{\"title\":\"change me\"}");
 
         //then
-        assertEquals(expected,targetTodo);
+        assertEquals(expected, targetTodo);
 
     }
 
@@ -100,22 +103,25 @@ class TodoService2Test {
     void invalid_json_patchTodo() throws Exception {
 
         //given
-        TodoModel targetTodo= testTodo;
+        TodoModel targetTodo = testTodo;
         String test_to_do_not = "test to do not";
         targetTodo.setTitle(test_to_do_not);
 
         //when
-       // TodoModel expected = todoService.patch(targetTodo.getId(), "{\title\":\"change me\"}");
+        // TodoModel expected = todoService.patch(targetTodo.getId(), "{\title\":\"change me\"}");
 
         //then
-        assertThrows(Exception.class,()-> {todoService.patch(targetTodo.getId(), "{\title\":\"change me\"}");});
+        assertThrows(Exception.class, () -> {
+            todoService.patch(targetTodo.getId(), "{\title\":\"change me\"}");
+        });
 
     }
+
     @Test
     void invalid_json_property_patchTodo() throws Exception {
 
         //given
-        TodoModel targetTodo= testTodo;
+        TodoModel targetTodo = testTodo;
         String test_to_do_not = "test to do not";
         targetTodo.setTitle(test_to_do_not);
 
@@ -133,14 +139,14 @@ class TodoService2Test {
     @Test
     void deleteTodo() {
         //when
-         todoService.deleteTodo(testTodo.getId());
+        todoService.deleteTodo(testTodo.getId());
         //then
         assertTrue(repository.findById(testTodo.getId()).isEmpty());
     }
 
     @Test
     @DisplayName("This test throws an exception when uuid is not found in database.")
-        void whenTodoNotFound_Throw_Exception_deleteTodo() {
-          assertThrows(IllegalArgumentException.class,()->todoService.deleteTodo(UUID.randomUUID()));
+    void whenTodoNotFound_Throw_Exception_deleteTodo() {
+        assertThrows(IllegalArgumentException.class, () -> todoService.deleteTodo(UUID.randomUUID()));
     }
 }

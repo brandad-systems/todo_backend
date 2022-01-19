@@ -21,24 +21,24 @@ public class TodoService2 {
         return repo.findAll();
     }
 
-    public void createTodo(TodoCreateModel createTodo) {
+    public TodoModel createTodo(TodoCreateModel createTodo) {
         TodoModel todoModel = new TodoModel(createTodo.getTitle(), createTodo.getContent(), createTodo.getDone());
-       repo.save(todoModel);
+        return repo.save(todoModel);
     }
 
     public TodoModel updateTodo(UUID id, TodoModel updateTodo) {
         TodoModel todoModel;
         Optional<TodoModel> todoModelById = repo.findById(id);
-       if( todoModelById.isPresent()){
+        if (todoModelById.isPresent()) {
             todoModel = todoModelById.get();
             todoModel.setContent(updateTodo.getContent());
             todoModel.setDone(updateTodo.getDone());
             todoModel.setTitle(updateTodo.getTitle());
             repo.save(todoModel);
-        }else
-        {
+        } else {
             throw new IllegalArgumentException();
-        };
+        }
+        ;
 
 
         return todoModel;
@@ -46,7 +46,7 @@ public class TodoService2 {
 
     public void deleteTodo(UUID id) {
         Optional<TodoModel> todoById = repo.findById(id);
-        todoById.ifPresentOrElse((value) ->     {
+        todoById.ifPresentOrElse((value) -> {
             repo.deleteById(value.getId());
         }, () -> {
             throw new IllegalArgumentException();
@@ -59,12 +59,12 @@ public class TodoService2 {
         TodoModel tobePatchedTodo = repo.findById(id).get();
         ObjectMapper objectMapper = new ObjectMapper();
 
-            ObjectReader todoReader = objectMapper.readerForUpdating(tobePatchedTodo);
-            tobePatchedTodo = todoReader.readValue(patchTodo);
-            repo.save(tobePatchedTodo);
-            return tobePatchedTodo;
+        ObjectReader todoReader = objectMapper.readerForUpdating(tobePatchedTodo);
+        tobePatchedTodo = todoReader.readValue(patchTodo);
+        repo.save(tobePatchedTodo);
+        return tobePatchedTodo;
 
-    //    return new TodoModel();
+        //    return new TodoModel();
     }
 
 
