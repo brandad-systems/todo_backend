@@ -18,7 +18,7 @@ public class TodoService2 {
 
     private final TodoCrudRepository repo;
 
-    public Iterable<TodoModel> getTodos() {
+    public List<TodoModel> getTodos() {
         return repo.findAll();
     }
 

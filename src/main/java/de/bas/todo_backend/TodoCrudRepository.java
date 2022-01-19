@@ -6,4 +6,6 @@ import java.util.*;
 
 public interface TodoCrudRepository extends CrudRepository<TodoModel, UUID> {
 
+    List<TodoModel> findAll();
+
 }

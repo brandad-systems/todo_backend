@@ -28,7 +28,7 @@ public class TodoControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private TodoService todoService;
+    private TodoService2 todoService;
 
     private final TodoModel testTodo = new TodoModel(UUID.randomUUID(), "todo1", "test", false);
 

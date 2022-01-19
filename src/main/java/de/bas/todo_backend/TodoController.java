@@ -1,5 +1,7 @@
 package de.bas.todo_backend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +16,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TodoController {
 
-    private final TodoService todoService;
+    private final TodoService2 todoService;
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TodoModel>> getTodos() {
-        return new ResponseEntity<>(todoService.getTodos(), HttpStatus.OK);
+        return new ResponseEntity(todoService.getTodos(), HttpStatus.OK);
     }
 
     @PostMapping(produces = "application/json")
-    public String createTodo(@RequestBody TodoCreateModel createTodo) {
-        return todoService.createTodo(createTodo);
+    public ResponseEntity<TodoModel> createTodo(@RequestBody TodoCreateModel createTodo) throws JsonProcessingException {
+        TodoModel todoModel = new ObjectMapper().readValue("{\"id\":"+"\""+todoService.createTodo(createTodo)+"\"}",TodoModel.class);
+        return new ResponseEntity<>(todoModel, HttpStatus.OK);
     }
 
     @PutMapping(path="/{id}", produces = "application/json")
@@ -37,7 +40,7 @@ public class TodoController {
     }
 
     @PatchMapping(path = "/{id}", consumes = "text/plain")
-    public TodoModel updateTodoPartially(@PathVariable("id") UUID id, @RequestBody String patchTodo) {
+    public TodoModel updateTodoPartially(@PathVariable("id") UUID id, @RequestBody String patchTodo) throws Exception {
         return todoService.patch(id, patchTodo);
     }
 }
