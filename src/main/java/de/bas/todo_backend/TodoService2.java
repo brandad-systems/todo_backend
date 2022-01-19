@@ -37,7 +37,7 @@ public class TodoService2 {
             todo.get().setDone(updateTodo.getDone());
             return todoRepo.save(todo.get());
         } else
-            throw new Exception("No class de.bas.todo_backend.TodoModel entity with id");
+            throw new Exception("No class de.bas.todo_backend.TodoModel entity with id="+id);
     }
 
     public void deleteTodo(UUID id) {
